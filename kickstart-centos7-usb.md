@@ -12,9 +12,9 @@ My intention was in putting all commands into script. Other manual for example t
 Most of the instructions described below was found on the [CentOS Wiki](https://wiki.centos.org/HowTos/InstallFromUSBkey#line-30) page on Installing from USB key. 
 
 
-# USB key preparation
+## USB key preparation
 
-## Partition USB
+### Partition USB
 
 This can't be done as a disk image. As I described earlier kickstart failed to start. Below I will use /dev/sdX for the USB device.
 
@@ -45,7 +45,7 @@ This can't be done as a disk image. As I described earlier kickstart failed to s
 	sudo syslinux /dev/sdX1
 ```
 
-## Copy files to USB
+### Copy files to USB
 
 * Mount the partitions
 ```
