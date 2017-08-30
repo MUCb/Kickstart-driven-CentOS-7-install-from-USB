@@ -1,4 +1,6 @@
-Kickstart driven CentOS 7 install from USB
+# Bootable USB with CentOS 7 and Kickstart
+==================
+
 None of what is written below is particularly original, however, I was unable to find a method documented on the internet at the time of writing that successfully created a kickstart driven CentOS 7 USB installer.
 My interest was in doing this manually as I require this USB (image) to be created from a script. Therefore, I did not look into using ISO to USB applications - in addition, these typically do not allow custom kickstart files to be used.
 References
