@@ -76,17 +76,17 @@ The final file structure looked something like this:
 ```
 BOOT/
 └── isolinux/
-		├── boot.cat
-		├── boot.msg
-		├── initrd.img
-		├── ks.cfg
-		├── ldlinux.sys
-		├── memtest
-		├── splash.png
-		├── syslinux.cfg
-		├── upgrade.img
-		├── vesamenu.c32
-		└── vmlinuz
+	├── boot.cat
+	├── boot.msg
+	├── initrd.img
+	├── ks.cfg
+	├── ldlinux.sys
+	├── memtest
+	├── splash.png
+	├── syslinux.cfg
+	├── upgrade.img
+	├── vesamenu.c32
+	└── vmlinuz
 DATA/
 └── CentOS-7.0-1406-x86_64-Minimal.iso
 ```
@@ -102,6 +102,8 @@ label linux
 ```
 
 The append line should contain path to iso image and kickstart file.
+```
 append initrd=initrd.img inst.stage2=hd:LABEL=DATA:/ quiet inst.ks=hd:LABEL=BOOT:/kickstart/ks.cfg
+```
 
 When you boot from the USB and select Install CentOS 7, it now installs the system as described by your kickstart.
