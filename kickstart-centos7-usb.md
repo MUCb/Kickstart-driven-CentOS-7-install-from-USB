@@ -4,7 +4,7 @@ This page was vreated because I failed to find full manual of kickstart driven C
 
 My intention was in putting all commands into script. Other manual for example tell you to use gparted of fdisk in order to fomrat USB drive. You can't use gparted in bash script.
 
-### Can we just dd CentOS image to USB stick and put kickstart file to USB?
+#### Can we just dd CentOS image to USB stick and put kickstart file to USB?
 * No, we can't. Kickstart failed to start.
 
 ## References
@@ -30,48 +30,78 @@ This can't be done as a disk image. As I described earlier kickstart failed to s
 ```
 
 * Format partitons
+```
+	sudo mkfs -t vfat -n "BOOT" /dev/sdX1
+	sudo mkfs -L "DATA" /dev/sdX2'
+```
 
-'sudo mkfs -t vfat -n "BOOT" /dev/sdX1
-sudo mkfs -L "DATA" /dev/sdX2'
+* Write MBR data to device
+```
+	sudo dd conv=notrunc bs=440 count=1 if=/usr/share/syslinux/mbr.bin of=/dev/sdX
+```
 
-	• Write MBR data to device
-sudo dd conv=notrunc bs=440 count=1 if=/usr/share/syslinux/mbr.bin of=/dev/sdX
-	• Install syslinux to first parition
+* Install syslinux to first parition
+```
 sudo syslinux /dev/sdX1
-Copy files to USB
-	• Mount the partitions
+```
+
+## Copy files to USB
+
+* Mount the partitions
+```
 mkdir BOOT && sudo mount /dev/sdX1 BOOT
 mkdir DATA && sudo mount /dev/sdX2 DATA
 mkdir DVD && sudo mount /path/to/centos/dvd.iso DVD
-	• Copy DVD isolinux contents to BOOT
-sudo cp DVD/isolinux/* BOOT
-	• rename isolinux.cfg to syslinux.cfg
-sudo mv BOOT/isolinux.cfg BOOT/syslinux.cfg
-	• I also deleted a few bits from BOOT I didn't think were required, e.g. isolinux.bin, TRANS.TBL, upgrade.img, grub.conf.
-	• I then copied my kickstart file to the BOOT directory and the CentOS 7 ISO to the DATA partition.
+```
+
+* Copy DVD isolinux to BOOT
+```
+sudo cp -r ./DVD/isolinux ./BOOT/
+```
+
+* rename isolinux.cfg to syslinux.cfg
+```
+sudo mv BOOT/isolinux/isolinux.cfg BOOT/isolinux/syslinux.cfg
+```
+
+* I also deleted a several files from BOOT I didn't think were required, e.g. isolinux.bin, TRANS.TBL, upgrade.img, grub.conf.
+
+* Copy kickstart file to the BOOT/isolinux directory and the CentOS 7 ISO to the DATA partition.
+```
+sudo cp  ./ks.cfg ./BOOT/isolinux/
+sudo cp  /path/to/centos/dvd.iso ./DATA/
+```
+
 The final file structure looked something like this:
+```
 BOOT/
-├── boot.cat
-├── boot.msg
-├── initrd.img
-├── ks.cfg
-├── ldlinux.sys
-├── memtest
-├── splash.png
-├── syslinux.cfg
-├── upgrade.img
-├── vesamenu.c32
-└── vmlinuz
+└── isolinux/
+		├── boot.cat
+		├── boot.msg
+		├── initrd.img
+		├── ks.cfg
+		├── ldlinux.sys
+		├── memtest
+		├── splash.png
+		├── syslinux.cfg
+		├── upgrade.img
+		├── vesamenu.c32
+		└── vmlinuz
 DATA/
 └── CentOS-7.0-1406-x86_64-Minimal.iso
-Edit the syslinux.cfg
-So that it points to the ISO and the kickstart
+```
+
+### Edit the syslinux.cfg
+
 Here is the install CentOS 7 entry from the Minimal ISO isolinux.cfg (which we renamed syslinux.cfg):
+```
 label linux                                                                     
   menu label ^Install CentOS 7                                                  
   kernel vmlinuz                                                                
   append initrd=initrd.img inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 quiet  
-The append line is changed to read the following:
-append initrd=initrd.img inst.stage2=hd:sdb2:/ ks=hd:sdb1:/ks.cfg
-I suspect LABEL could be used here, rather than the enumerated device, which would make it safer, but I haven't tried this yet. Assuming the system you are installing on only has a single HD the USB key will be enumerated as sdb more information about this can be found in the Softpanorama article.
+```
+
+The append line should contain path to iso image and kickstart file.
+append initrd=initrd.img inst.stage2=hd:LABEL=DATA:/ quiet inst.ks=hd:LABEL=BOOT:/kickstart/ks.cfg
+
 When you boot from the USB and select Install CentOS 7, it now installs the system as described by your kickstart.
