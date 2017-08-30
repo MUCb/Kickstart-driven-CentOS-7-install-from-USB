@@ -42,34 +42,34 @@ This can't be done as a disk image. As I described earlier kickstart failed to s
 
 * Install syslinux to first parition
 ```
-sudo syslinux /dev/sdX1
+	sudo syslinux /dev/sdX1
 ```
 
 ## Copy files to USB
 
 * Mount the partitions
 ```
-mkdir BOOT && sudo mount /dev/sdX1 BOOT
-mkdir DATA && sudo mount /dev/sdX2 DATA
-mkdir DVD && sudo mount /path/to/centos/dvd.iso DVD
+	mkdir BOOT && sudo mount /dev/sdX1 BOOT
+	mkdir DATA && sudo mount /dev/sdX2 DATA
+	mkdir DVD && sudo mount /path/to/centos/dvd.iso DVD
 ```
 
 * Copy DVD isolinux to BOOT
 ```
-sudo cp -r ./DVD/isolinux ./BOOT/
+	sudo cp -r ./DVD/isolinux ./BOOT/
 ```
 
 * rename isolinux.cfg to syslinux.cfg
 ```
-sudo mv BOOT/isolinux/isolinux.cfg BOOT/isolinux/syslinux.cfg
+	sudo mv BOOT/isolinux/isolinux.cfg BOOT/isolinux/syslinux.cfg
 ```
 
 * I also deleted a several files from BOOT I didn't think were required, e.g. isolinux.bin, TRANS.TBL, upgrade.img, grub.conf.
 
 * Copy kickstart file to the BOOT/isolinux directory and the CentOS 7 ISO to the DATA partition.
 ```
-sudo cp  ./ks.cfg ./BOOT/isolinux/
-sudo cp  /path/to/centos/dvd.iso ./DATA/
+	sudo cp  ./ks.cfg ./BOOT/isolinux/
+	sudo cp  /path/to/centos/dvd.iso ./DATA/
 ```
 
 The final file structure looked something like this:
