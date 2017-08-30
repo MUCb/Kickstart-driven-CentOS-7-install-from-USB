@@ -12,21 +12,26 @@ My intention was in putting all commands into script. Other manual for example t
 Most of the instructions described below was found on the [CentOS Wiki](https://wiki.centos.org/HowTos/InstallFromUSBkey#line-30) page on Installing from USB key. 
 
 
-USB key preparation
-Partition USB
-This can probably be done as a disk image too, though I haven't tried this yet. Below I will use /dev/sdX for the USB device.
-	• Create two partitions, one of type W95 FAT32 (LBA) (assigned code "c" in fdisk) of ~250MB, make this partition bootable. Create an ext3 partition from the remaining space.
-sudo fdisk /dev/sdX
-n (create partition, accept defaults for type, number, and first sector)
-+250M (defined size as 250MB)
-t
-c (change type to W95 FAT32 (LBA) - other FAT types may work, but I have not tried)
-a (make bootable)
-n (create partition, accept defaults for type, number, first sector, and size)
-w (write changes to device)
-	• Format partitons
-sudo mkfs -t vfat -n "BOOT" /dev/sdX1
-sudo mkfs -L "DATA" /dev/sdX2
+# USB key preparation
+
+## Partition USB
+
+This can't be done as a disk image. As I described earlier kickstart failed to start. Below I will use /dev/sdX for the USB device.
+
+* Create two partitions, one of type W95 FAT32 (LBA) of ~250MB, make this partition bootable. Create an ext4 partition from the remaining space.
+
+'	sudo parted --script /dev/sdX \
+	        mklabel msdos \
+	        mkpart primary fat32    1MiB       250MiB \
+	        mkpart primary ext4    250MiB       -1MiB \
+	        \
+	        set 1 boot on'
+
+* Format partitons
+
+'sudo mkfs -t vfat -n "BOOT" /dev/sdX1
+sudo mkfs -L "DATA" /dev/sdX2'
+
 	• Write MBR data to device
 sudo dd conv=notrunc bs=440 count=1 if=/usr/share/syslinux/mbr.bin of=/dev/sdX
 	• Install syslinux to first parition
