@@ -20,12 +20,12 @@ This can't be done as a disk image. As I described earlier kickstart failed to s
 
 * Create two partitions, one of type W95 FAT32 (LBA) of ~250MB, make this partition bootable. Create an ext4 partition from the remaining space.
 
-'	sudo parted --script /dev/sdX \
+`	sudo parted --script /dev/sdX \
 	        mklabel msdos \
 	        mkpart primary fat32    1MiB       250MiB \
 	        mkpart primary ext4    250MiB       -1MiB \
 	        \
-	        set 1 boot on'
+	        set 1 boot on`
 
 * Format partitons
 
